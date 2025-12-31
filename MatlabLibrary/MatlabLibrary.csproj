@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+    <Compile Remove="IMatlabBackend.cs" />
+    <Compile Remove="MatlabAddons.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="MLApp">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>c36e46ab-6a81-457b-9f91-a7719a06287f</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ApplicationLibrary">
+      <HintPath>..\..\..\ApplicationLibrary\ApplicationLibrary\ApplicationLibrary\bin\Debug\net10.0\ApplicationLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="CAD_Library">
+      <HintPath>..\..\..\CAD_Library\CAD_Library\CAD_Library\bin\Debug\net10.0\CAD_Library.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonObjectsLibrary">
+      <HintPath>..\..\..\CommonObjectsLibrary\CommonObjectsLibrary\CommonObjectsLibrary\bin\Debug\net10.0\CommonObjectsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="MathematicsLibrary">
+      <HintPath>..\..\..\MathematicsLibrary\MathematicsLibrary\MathematicsLibrary\bin\Debug\net10.0\MathematicsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="StructuresLibrary">
+      <HintPath>..\..\..\StructuresLibrary\StructuresLibrary\StructuresLibrary\bin\Debug\net10.0\StructuresLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="SystemsEngineeringLibrary">
+      <HintPath>..\..\..\SystemsEngineeringLibrary\SystemsEngineeringLibrary\SystemsEngineeringLibrary\bin\Debug\net10.0\SystemsEngineeringLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
