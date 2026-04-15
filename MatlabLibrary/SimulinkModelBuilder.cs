@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MLApp;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using MLApp;
+using static MatlabLib.SimulinkBlock;
 
 namespace MatlabLib
 {
@@ -177,11 +178,10 @@ namespace MatlabLib
             SimulinkBlock block = new()
             {
                 Name = blockName,
-                Path = destPath,
-                //LibraryPath = libraryPath,
+                Path = destPath,                
                 CurrentSimulinkModel = model
             };
-
+            //block.MyBlockLibrary.ToString = libraryPath,
             model.MyBlocks.Add(block);
             model.CurrentBlock = block;
             return block;
