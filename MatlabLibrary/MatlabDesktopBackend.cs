@@ -1,10 +1,13 @@
-﻿using MLApp;
-using System;
+﻿using System.Windows;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Applications;
+using MLApp;
+using SE_Library;
+using System.Runtime.Versioning;
 
+
+
+[SupportedOSPlatform("windows")]
 public sealed class MatlabDesktopBackend 
 {
     private readonly Type t;
@@ -14,7 +17,9 @@ public sealed class MatlabDesktopBackend
     {
         t = Type.GetTypeFromProgID("matlab.application")
             ?? throw new InvalidOperationException("MATLAB COM server not registered.");
-        matlab = Activator.CreateInstance(t);
+        var instance = Activator.CreateInstance(t)
+            ?? throw new InvalidOperationException("Failed to create MATLAB COM instance.");
+        matlab = instance;
 
         matlab.Visible = 1;
     }

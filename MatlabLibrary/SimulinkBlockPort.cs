@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MatlabLib
 {
-    public class SimulinkSignal
+    public class SimulinkBlockPort
     {
         //  *****************************************************************************************
         //  DECLARATIONS
@@ -29,8 +29,21 @@ namespace MatlabLib
         //  ************************************************************
         #region
         //
-        //  Signal Data Type
-        public enum SignalDataType
+        //  Port Direction
+        public enum PortDirection
+        {
+            Input = 0,
+            Output,
+            Enable,
+            Trigger,
+            State,
+            LConn,
+            RConn
+        }
+
+        //
+        //  Port Data Type
+        public enum PortDataType
         {
             Double = 0,
             Single,
@@ -48,35 +61,31 @@ namespace MatlabLib
         }
 
         //
-        //  Signal Complexity
-        public enum SignalComplexity
+        //  Port Complexity
+        public enum PortComplexity
         {
             Real = 0,
-            Complex
-        }
-
-        //
-        //  Signal Storage Class (for code generation)
-        public enum SignalStorageClass
-        {
-            Auto = 0,
-            ExportedGlobal,
-            ImportedExtern,
-            ImportedExternPointer,
-            SimulinkGlobal,
-            Custom
+            Complex,
+            Inherited
         }
         #endregion
         //  *****************************************************************************************
 
 
         //  *****************************************************************************************
-        //  SIMULINKSIGNAL CONSTRUCTOR
+        //  SIMULINKBLOCKPORT CONSTRUCTOR
         //
         //  ************************************************************
         #region
-        public SimulinkSignal()
+        public SimulinkBlockPort()
         {
+        }
+
+        public SimulinkBlockPort(string name, int portNumber, PortDirection direction)
+        {
+            Name = name;
+            PortNumber = portNumber;
+            Direction = direction;
         }
         #endregion
         //  *****************************************************************************************
@@ -90,42 +99,56 @@ namespace MatlabLib
         //  
         //  Identification
         public string Name { get; set; } = string.Empty;
-        public string Version { get; set; } = string.Empty;
-        public string Path { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
         //
         //  Data
-        public SignalDataType DataType { get; set; } = SignalDataType.Double;
-        public SignalComplexity Complexity { get; set; } = SignalComplexity.Real;
-        public string Units { get; set; } = string.Empty;
+        //
+        //  Port Index (1-based, matching Simulink convention)
+        public int PortNumber { get; set; } = 1;
+
+        //
+        //  Direction
+        public PortDirection Direction { get; set; } = PortDirection.Input;
+
+        //
+        //  Data Type
+        public PortDataType DataType { get; set; } = PortDataType.Inherited;
+
+        //
+        //  Complexity
+        public PortComplexity Complexity { get; set; } = PortComplexity.Inherited;
+
+        //
+        //  Dimensions (e.g., [1] for scalar, [3,1] for vector, [2,3] for matrix)
         public int[] Dimensions { get; set; } = [1];
-        public double SampleTime { get; set; } = -1;   //  -1 = inherited
+
+        //
+        //  Sample Time (-1 = inherited)
+        public double SampleTime { get; set; } = -1;
+
+        //
+        //  Units (e.g., "m/s", "rad", "N")
+        public string Units { get; set; } = string.Empty;
+
+        //
+        //  Min/Max Constraints
         public double MinValue { get; set; } = double.NegativeInfinity;
         public double MaxValue { get; set; } = double.PositiveInfinity;
-        public double InitialValue { get; set; } = 0.0;
-        public SignalStorageClass StorageClass { get; set; } = SignalStorageClass.Auto;
-        public bool IsDiscrete { get; set; } = false;
 
         //
-        //  Logging & Debugging
-        public bool IsLogged { get; set; } = false;
-        public bool IsTestPoint { get; set; } = false;
-
-        //
-        //  Port Info
-        public int SourcePortIndex { get; set; } = 0;
-        public int DestinationPortIndex { get; set; } = 0;
+        //  Direct Feedthrough (relevant for input ports in S-Functions and code generation)
+        public bool HasDirectFeedthrough { get; set; } = true;
 
         //
         //  Owned & Owning Objects
-        public SimulinkBlock? SourceBlock { get; set; }
-        public SimulinkBlock? DestinationBlock { get; set; }
-        public SimulinkModel? CurrentSimulinkModel { get; set; }
+        //
+        //  Owning Block
+        public SimulinkBlock? OwningBlock { get; set; }
 
         //
-        //  Custom Attributes
-        public Dictionary<string, string> Attributes { get; set; } = new();
+        //  Connected Signal
+        public SimulinkSignal? ConnectedSignal { get; set; }
         #endregion
         //  *****************************************************************************************
 
@@ -137,52 +160,63 @@ namespace MatlabLib
         #region
         //
         //  Connectivity
-        public void SetSource(SimulinkBlock block, int portIndex)
+        public void Connect(SimulinkSignal signal)
         {
-            SourceBlock = block;
-            SourcePortIndex = portIndex;
+            ConnectedSignal = signal;
         }
 
-        public void SetDestination(SimulinkBlock block, int portIndex)
+        public void Disconnect()
         {
-            DestinationBlock = block;
-            DestinationPortIndex = portIndex;
+            ConnectedSignal = null;
         }
 
-        //
-        //  Attributes
-        public void SetAttribute(string attributeName, string value)
+        public bool IsConnected()
         {
-            Attributes[attributeName] = value;
-        }
-
-        public string? GetAttribute(string attributeName)
-        {
-            return Attributes.TryGetValue(attributeName, out string? value) ? value : null;
+            return ConnectedSignal is not null;
         }
 
         //
-        //  Validation
+        //  Dimension Helpers
         public bool IsScalar()
         {
             return Dimensions.Length == 1 && Dimensions[0] == 1;
         }
 
-        public bool IsConnected()
+        public bool IsVector()
         {
-            return SourceBlock is not null && DestinationBlock is not null;
+            return Dimensions.Length == 1 && Dimensions[0] > 1;
+        }
+
+        public bool IsMatrix()
+        {
+            return Dimensions.Length == 2;
+        }
+
+        public int GetTotalElements()
+        {
+            int total = 1;
+            foreach (int dim in Dimensions)
+            {
+                total *= dim;
+            }
+            return total;
         }
 
         //
-        //  Logging
-        public void EnableLogging()
+        //  Validation
+        public bool IsInput()
         {
-            IsLogged = true;
+            return Direction == PortDirection.Input;
         }
 
-        public void DisableLogging()
+        public bool IsOutput()
         {
-            IsLogged = false;
+            return Direction == PortDirection.Output;
+        }
+
+        public bool IsValueInRange(double value)
+        {
+            return value >= MinValue && value <= MaxValue;
         }
         #endregion
         //  *****************************************************************************************

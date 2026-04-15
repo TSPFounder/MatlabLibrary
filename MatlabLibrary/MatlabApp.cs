@@ -1,10 +1,10 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows;
 using System.Collections.Generic;
-using CAD;
+using Applications;
 using MLApp;
+using SE_Library;
 
-namespace SystemsEngineering
+namespace MatlabLib
 {
     public class MatlabApp : ApplicationClass
     {
@@ -12,44 +12,11 @@ namespace SystemsEngineering
         //  *****************************************************************************************
         // DECLARATIONS
         //
-        //  Identifications
-
-
-        //  Owned & Owning Objects
-        //
-        //  The Application Manager
-        private ApplicationManager _MyApplicationManager;
-        //
-        //  The Matlab App
-        private MLApp.MLApp _ExistingMatlabApp;
-        private MLApp.MLApp _CurrentMatlabApp;
-        //
-        //  Projects
+        //  Projects (No properties exposed for these yet, keeping as fields)
         private MatlabProject _CurrentProject;
         private List<MatlabProject> _MyProjects;
-        //
-        //  The Matlab API
-        private MatlabAPI _TheMatlabAPI;
-        //
-        //  Toolboxes
-        private List<ApplicationAddOn> _Toolboxes;
-        private List<ApplicationAddOn> _Blocksets;
-
-        //  Booleans
-        private Boolean _MatlabRunning;
-        protected bool _HasSimulink;
-        protected bool _HasSimScape;
 
         //  *****************************************************************************************
-
-
-        //  *****************************************************************************************
-        //  INITIALIZATIONS
-
-
-
-        ///  *****************************************************************************************
-
 
         //  *****************************************************************************************
         //  MATLABAPP CONSTRUCTOR
@@ -58,6 +25,10 @@ namespace SystemsEngineering
         {
             this.MyApplicationManager = myAppMgr;
             this.TheMatlabAPI = new MatlabAPI();
+            this._MyProjects = new List<MatlabProject>();
+            this.Toolboxes = new List<ApplicationAddOn>();
+            this.Blocksets = new List<ApplicationAddOn>();
+            this._CurrentProject = new MatlabProject();
         }
         //  *****************************************************************************************
 
@@ -69,112 +40,48 @@ namespace SystemsEngineering
         //  Owned & Owning Objects
         //
         //  The Application Manager
-        public ApplicationManager MyApplicationManager
-        {
-            set => _MyApplicationManager = value;
-            get { return _MyApplicationManager; }
-        }
+        public ApplicationManager MyApplicationManager { get; set; }
+        
         //
         //  The Matlab Application objects
         //
         //  Existing Application
-        public MLApp.MLApp ExistingMatlabApp
-        {
-            set
-            {
-                _ExistingMatlabApp = value;
-            }
-
-            get
-            {
-                return _ExistingMatlabApp;
-            }
-
-        }
+        public MLApp.MLApp? ExistingMatlabApp { get; set; }
+        
         //
         //  Current Application
-        public MLApp.MLApp CurrentMatlabApp
-        {
-            set
-            {
-                _CurrentMatlabApp = value;
-            }
-
-            get
-            {
-                return _CurrentMatlabApp;
-            }
-
-        }
+        public MLApp.MLApp? CurrentMatlabApp { get; set; }
+        
         //
         //  The Matlab API
-        public MatlabAPI TheMatlabAPI      
-        {
-            set => _TheMatlabAPI = value;
-            get { return _TheMatlabAPI; }
-        }
+        public MatlabAPI TheMatlabAPI { get; set; }      
+        
         //  **************
         //  Add-Ons
         //
         //  Toolboxes
-        public List<ApplicationAddOn> Toolboxes
-        {
-            set => _Toolboxes = value;
-            get
-            {
-                return _Toolboxes;
-            }
-        }
+        public List<ApplicationAddOn> Toolboxes { get; set; }
+        
         //
         //  Blocksets
-        public List<ApplicationAddOn> Blocksets
-        {
-            set => _Blocksets = value;
-            get
-            {
-                return _Blocksets;
-            }
-        }
+        public List<ApplicationAddOn> Blocksets { get; set; }
 
         //  **************
         //  Booleans
         //
         //  Matlab is Running
-        public Boolean MatlabRunning
-        {
-
-            set => _MatlabRunning = value;
-            get
-            {
-                return _MatlabRunning;
-            }
-        }
+        public Boolean MatlabRunning { get; set; }
+        
         //
         //  Has Simulink
-        public Boolean HasSimulink
-        {
-
-            set => _HasSimulink = value;
-            get
-            {
-                return _HasSimulink;
-            }
-        }
+        public Boolean HasSimulink { get; set; }
+        
         //
         //  Has SimScape
-        public Boolean HasSimScape
-        {
-
-            set => _HasSimScape = value;
-            get
-            {
-                return _HasSimScape;
-            }
-        }
+        public Boolean HasSimScape { get; set; }
 
 
         //  *****************************************************************************************
-
 
         //  *****************************************************************************************
         //  METHODS
@@ -205,12 +112,17 @@ namespace SystemsEngineering
         {
             try
             {
+                if (this.CurrentMatlabApp == null)
+                {
+                    Console.WriteLine("CurrentMatlabApp is not initialized.");
+                    return false;
+                }
                 this.CurrentMatlabApp.Execute(cmd);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Couldn't Run Matlab Command");
+                Console.WriteLine($"Couldn't Run Matlab Command: {ex.Message}");
                 return false;
             }
         }
@@ -224,21 +136,15 @@ namespace SystemsEngineering
                 this.MatlabRunning = true;
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Couldn't Start Simulink");
+                Console.WriteLine($"Couldn't Start Simulink: {ex.Message}");
                 return false;
             }
         }
         #endregion
         //  *****************************************************************************************
 
-
-        //  *****************************************************************************************
-        //  EVENTS
-        //
-        //  ************************************************************
-
-        //  *****************************************************************************************
+        // ... (Events regions remain unchanged)
     }
 }

@@ -1,17 +1,13 @@
-﻿using CAD;
-using MLApp;
-using SystemsEngineering;
-using System;
+﻿using System.Windows;
 using System.Collections.Generic;
-using Propulsion;
-using MissionsNamespace;
-using Power;
-using Simulation;
+using Applications;
+using MLApp;
+using SE_Library;
 using Mathematics;
 
-namespace SystemsEngineering
+namespace MatlabLib
 {
-    public class MatlabAPI : ApplicationProgrammingInterface
+    public class MatlabAPI 
     {
         //  *****************************************************************************************
         //  DECLARATIONS
@@ -51,7 +47,8 @@ namespace SystemsEngineering
         //  ************************************************************
         public MatlabAPI()
         {
-
+            _CurrentPoint = new Point();
+            _MyPoints = new List<Point>();
         }
         //  *****************************************************************************************
 

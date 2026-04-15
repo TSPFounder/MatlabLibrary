@@ -1,26 +1,9 @@
 ﻿using System.Windows;
-using System.Windows.Forms;
-
-using Microsoft.Win32;
-//using OfficeApps;
-using System;
 using System.Collections.Generic;
-using Microsoft.Office.Interop;
-using CAD;
-using Mathematics;
-//using UModelLib;
-//using SldWorks;
-using Simulation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Schema;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Bson;
-using MissionsNamespace;
-using Project;
+using Applications;
+using SE_Library;
 
-namespace SystemsEngineering
+namespace MatlabLib
 {
     public class SimulinkBlockset : ApplicationAddOn
     {
@@ -59,13 +42,12 @@ namespace SystemsEngineering
         #region
         public enum SimulinkBlocksetEnum
         {
-            AerospaceBlockset=0,
+            AerospaceBlockset = 0,
             RF_Blockset,
             Simulink3DAnimation,
             SimulinkControlDesign,
             SimulinkDesignOptimization,
             SimulinkReportGenerator
-
         }
         #endregion
         //  *****************************************************************************************
@@ -78,7 +60,6 @@ namespace SystemsEngineering
         #region
         public SimulinkBlockset()
         {
-            
         }
         #endregion
         //  *****************************************************************************************
@@ -89,7 +70,30 @@ namespace SystemsEngineering
         //
         //  ************************************************************
         #region
+        //  
+        //  Identification
+        public string Name { get; set; } = string.Empty;
+        public new string Version { get; set; } = string.Empty;
+        public new string Description { get; set; } = string.Empty;
+        public string LibraryPath { get; set; } = string.Empty;
 
+        //
+        //  Data
+        public SimulinkBlocksetEnum MyBlocksetEnum { get; set; }
+        public new bool IsInstalled { get; set; } = false;
+        public bool IsLicensed { get; set; } = false;
+
+        //
+        //  Owned & Owning Objects
+        //
+        //  Simulink Blocks
+        public SimulinkBlock? CurrentBlock { get; set; }
+        public List<SimulinkBlock> MyBlocks { get; set; } = new();
+
+        //
+        //  Simulink Models
+        public SimulinkModel? CurrentSimulinkModel { get; set; }
+        public List<SimulinkModel> MySimulinkModels { get; set; } = new();
         #endregion
         //  *****************************************************************************************
 
@@ -99,7 +103,42 @@ namespace SystemsEngineering
         //
         //  ************************************************************
         #region
+        //
+        //  Block Management
+        public void AddBlock(SimulinkBlock block)
+        {
+            if (!MyBlocks.Contains(block))
+            {
+                MyBlocks.Add(block);
+            }
+        }
 
+        public bool RemoveBlock(SimulinkBlock block)
+        {
+            return MyBlocks.Remove(block);
+        }
+
+        public SimulinkBlock? FindBlockByName(string blockName)
+        {
+            return MyBlocks.Find(b => b.Name == blockName);
+        }
+
+        public List<SimulinkBlock> GetBlocksByType(string blockType)
+        {
+            return MyBlocks.FindAll(b => b.BlockType == blockType);
+        }
+
+        //
+        //  Validation
+        public bool ContainsBlock(string blockName)
+        {
+            return MyBlocks.Exists(b => b.Name == blockName);
+        }
+
+        public bool IsAvailable()
+        {
+            return IsInstalled && IsLicensed;
+        }
         #endregion
         //  *****************************************************************************************
 

@@ -1,20 +1,12 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows;
 using System.Collections.Generic;
-using System.Windows;
-using Propulsion;
-using Power;
-using Structure;
-using SensorNamespace;
-using Data;
-using CAD;
-using Controls;
-using DreamWorldMakerLibrary;
-using MissionsNamespace;
+using Applications;
+using MLApp;
+using SE_Library;
 
-namespace SystemsEngineering
+namespace MatlabLib
 {
-    public class MatlabWorkflow :Workflow
+    public class MatlabWorkflow 
     {
         //  *****************************************************************************************
         //  DECLARATIONS
@@ -61,7 +53,7 @@ namespace SystemsEngineering
         #region
         public MatlabWorkflow()
         {
-            this.WorkflowType = WorkflowTypeEnum.Matlab;
+            
         }
         #endregion
         //  *****************************************************************************************
