@@ -1,0 +1,37 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Copilot / VS indices & snapshots (the deep-path files causing your error)
+**/CopilotSnapshots/
+**/CopilotIndices/
+**/ProjectEvaluation/
+
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# Rider / VSCode
+.idea/
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
