@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "K/ymcQE5Tkg=",
+  "dgSpecHash": "1XWmuFY1Qto=",
   "success": true,
-  "projectFilePath": "D:\\DreamWorldMaker\\Projects\\DotNet\\MatlabLibrary\\MatlabLibrary\\MatlabLibrary\\MatlabLibrary.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\DreamWorldMaker\\Repos\\MatlabLibrary\\MatlabLibrary\\MatlabLibrary\\MatlabLibrary.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\henry\\.nuget\\packages\\newtonsoft.json\\13.0.4\\newtonsoft.json.13.0.4.nupkg.sha512"
+  ],
   "logs": []
 }

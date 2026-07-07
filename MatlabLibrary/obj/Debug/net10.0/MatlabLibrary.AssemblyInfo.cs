@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MatlabLibrary")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+92c1e82954f75e47c9060560dfa229b8a7765f9f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MatlabLibrary")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MatlabLibrary")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

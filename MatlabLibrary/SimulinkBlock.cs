@@ -70,7 +70,7 @@ namespace MatlabLib
             ROS_Toolbox,
             Simulink3DAnimation,
             SimulinkCoder,
-            SimulinkControlDesign,
+            SimulinkControlDesign, 
             SimulinkDesignOptimization,
             SimulinkExtras,
             ArduinoSupportPackage,
@@ -90,11 +90,16 @@ namespace MatlabLib
         //
         //  ************************************************************
         #region
-        public SimulinkBlock()
+        public SimulinkBlock() { }
+
+        public SimulinkBlock(SimulinkBlockLibrary lib, bool isToolbox, bool isSupportPackage)
         {
             //
             //  Identification
-            
+            this.MyBlockLibrary = lib;
+            this.IsToolbox = isToolbox;
+            this.IsSupportPackage = isSupportPackage;
+
         }
         #endregion
         //  *****************************************************************************************
@@ -111,7 +116,8 @@ namespace MatlabLib
         public string Path { get; set; } = string.Empty;
         public string BlockType { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-
+        public bool IsToolbox { get; set; }
+        public bool IsSupportPackage { get; set; }
         //
         //  Data
         public SimulinkBlockLibrary MyBlockLibrary { get; set; }            
@@ -139,6 +145,12 @@ namespace MatlabLib
         //  Block Parameters (typed parameter objects)
         public SimulinkBlockParameter? CurrentBlockParameter { get; set; }
         public List<SimulinkBlockParameter> BlockParameters { get; set; } = new();
+
+        //
+        //  Source Add-On (the Toolbox, Support Package, or Blockset this block belongs to)
+        public MatlabToolbox? OwningToolbox { get; set; }
+        public MatlabSupportPackage? OwningSupportPackage { get; set; }
+        public SimulinkBlockset? OwningBlockset { get; set; }
         #endregion
         //  *****************************************************************************************
 
@@ -148,7 +160,7 @@ namespace MatlabLib
         //
         //  ************************************************************
         #region
-        
+
 
         //
         //  Block Port Management
@@ -287,6 +299,56 @@ namespace MatlabLib
             if (!OutputSignals.Contains(signal))
             {
                 OutputSignals.Add(signal);
+            }
+        }
+
+        //
+        //  Add-On Assignment
+        //
+        //  Assigns a MatlabToolbox, MatlabSupportPackage, or SimulinkBlockset to this block
+        //  based on the IsToolbox and IsSupportPackage flags:
+        //    IsToolbox = true                        → MatlabToolbox
+        //    IsSupportPackage = true                  → MatlabSupportPackage
+        //    IsToolbox = false && IsSupportPackage = false → SimulinkBlockset
+        public void AssignSourceAddOn(MatlabToolbox? toolbox,
+            MatlabSupportPackage? supportPackage, SimulinkBlockset? blockset)
+        {
+            //  Clear any previous assignment
+            OwningToolbox = null;
+            OwningSupportPackage = null;
+            OwningBlockset = null;
+
+            if (IsToolbox)
+            {
+                if (toolbox is null)
+                {
+                    throw new ArgumentNullException(nameof(toolbox),
+                        "A MatlabToolbox must be provided when IsToolbox is true.");
+                }
+
+                OwningToolbox = toolbox;
+                toolbox.AddBlock(this);
+            }
+            else if (IsSupportPackage)
+            {
+                if (supportPackage is null)
+                {
+                    throw new ArgumentNullException(nameof(supportPackage),
+                        "A MatlabSupportPackage must be provided when IsSupportPackage is true.");
+                }
+
+                OwningSupportPackage = supportPackage;
+            }
+            else
+            {
+                if (blockset is null)
+                {
+                    throw new ArgumentNullException(nameof(blockset),
+                        "A SimulinkBlockset must be provided when the block is neither a toolbox nor a support package.");
+                }
+
+                OwningBlockset = blockset;
+                blockset.AddBlock(this);
             }
         }
         #endregion
